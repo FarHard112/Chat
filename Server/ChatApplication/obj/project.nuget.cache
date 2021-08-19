@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "s3MFx6XjW1/8x8UnSps5rM0B3utkp4c3eZ66oIFumMDJK0YEKsPBxlw7bvrKhL3Y+P2Wd3G3fhFRsoorrjtNJw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\MSI-PC\\source\\repos\\ChatApplication\\ChatApplication\\ChatApplication.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\MSI-PC\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.8\\microsoft.netcore.app.host.win-x64.5.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

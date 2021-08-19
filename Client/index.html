@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="node_modules/@microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+</head>
+
+<body>
+    <script type="text/javascript">
+    $(function() {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("https://localhost:5001/messagehub").withAutomaticReconnect()
+            .build();
+        connection.start();
+        $('#btnSend').click(function(e) {
+
+            let message = $('#txtMessage').val();
+            let connectionIds = $('#connectionIds').val().split(",");
+            connection.invoke("SendMessage", message, $('input[name=group]:checked').val());
+        });
+
+        start();
+
+        function animation() {
+            situation.fadeIn(2000, () => {
+                setTimeout(() => {
+                    situation.fadeOut();
+                }, 2000);
+            });
+        }
+        //Reconnect Try
+        const situation = $('#situation');
+        connection.onreconnecting(error => {
+            situation.css("background-color", "blue");
+            situation.css("color", "white");
+            situation.html("Bağlantı yenidən qurulur ...");
+            animation();
+        });
+        //Success Connection
+        connection.onreconnected(connectionId => {
+            situation.css("background-color", "green");
+            situation.css("color", "white");
+            situation.html("Bağlantı  quruldu ...");
+            animation();
+        });
+        connection.onclose(connectionId => {
+            situation.css("background-color", "red");
+            situation.css("color", "white");
+            situation.html("Bağlantı qurulmadı ...");
+            animation();
+        });
+        //Geting list of Clients
+        connection.on('clients', clientsData => {
+            let text = "";
+            $.each(clientsData, (index, item) => {
+                text += `<li>${item}</li>`;
+            });
+            $('#clients').html(text);
+        });
+        //If user is connected
+        connection.on("userJoined", connectionId => {
+
+            situation.html(connectionId + 'User bağlandı ');
+            situation.css("background-color", "green");
+            situation.css("color", "white");
+
+        });
+
+        //if user leave the chat
+
+        connection.on("userLeaved", connectionId => {
+            situation.html(connectionId + 'User tərk etdi ');
+            situation.css("background-color", "red");
+            situation.css("color", "white");
+            animation();
+        });
+
+        connection.on("receiveMessage", message => {
+            $('#messageDiv').append(message + '<br>');
+        });
+
+        //Caller Connection Id
+        let _connectionId = "";
+        connection.on("getConnectionId", connectionId => {
+            _connectionId = connectionId;
+            $('#connectionId').html(`ConnectionId : ${connectionId}`);
+
+        });
+
+        $('#btnJoinGroup').click(() => {
+            let groupName = $('input[name=group]:checked').val();
+            connection.invoke("AddGroup", _connectionId, groupName);
+        });
+
+
+
+
+        //Check if Connection is OK (On Start)
+        async function start() {
+            try {
+                await connection.start();
+            } catch (error) {
+                setTimeout(() => start(), 2000)
+            }
+        }
+
+    });
+    </script>
+</body>
+<div id="connectionId" style="background-color: black;color: whitesmoke;"></div>
+<input type="radio" name="group" value="A">A
+<input type="radio" name="group" value="B">B
+<input type="radio" name="group" value="C">C
+<button id="btnJoinGroup">Join</button>
+<div id="situation" style="display: none;"></div>
+<br>
+<input type="text" id="txtMessage" placeholder="Message">
+<br>
+<textarea id="connectionIds" cols="30" placeholder="ConnectionId" rows="10"></textarea>
+<br>
+<button id="btnSend">Send</button>
+<div id="messageDiv"></div>
+<div>
+    <ul id="clients"></ul>
+</div>
+
+</html>

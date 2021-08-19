@@ -1,0 +1,39 @@
+.container {
+    widows: 100%;
+    height: auto;
+}
+
+.widthOptimizer {
+    width: 55%;
+    margin: 10px;
+}
+
+#btnDiv {
+    margin-left: 140px;
+}
+
+#btnCreateGroup {
+    color: white;
+}
+
+.tabOptimizer {
+    width: 55%;
+    margin-left: 7px;
+}
+
+#btnSendMessage {
+    margin-left: 130px;
+}
+
+.mainLink {
+    color: red;
+}
+
+.activeClient {
+    color: darkblue;
+}
+
+.users {
+    width: 55%;
+    margin: 10px;
+}
